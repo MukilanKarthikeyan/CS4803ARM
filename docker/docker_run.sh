@@ -7,4 +7,4 @@ docker run -it \
            -e DISPLAY=$DISPLAY \
 	       -v /tmp/.X11-unix/:/tmp/.X11-unix/:rw \
            -v "$(pwd)/../user_data:/user_data" \
-           skim743/piper_sim_mujoco
+           skim743/piper_sim_mujoco:latest
