@@ -1,0 +1,11 @@
+<mujoco model="breadboard_2424">
+  <asset>
+    <mesh name="breadboard_mesh" file="thorlabs_breadboard/breadboard.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <body name="breadboard" pos="0.3468 0 0" euler="1.57 0 0">
+      <geom type="mesh" mesh="breadboard_mesh" rgba="0.1 0.1 0.1 1" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+</mujoco>
