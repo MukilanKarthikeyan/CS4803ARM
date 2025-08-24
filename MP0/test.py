@@ -115,12 +115,14 @@ home = {
 # Set initial joint positions
 set_qpos_by_joint_names(home)
 data.ctrl[:] = 0.0
-for _ in range(1000):
+for t in range(200):
     mujoco.mj_step(model, data)
     if viewer is not None:
         viewer.sync()
+
     time.sleep(0.001)  # Small delay for smooth visualization
 
+print("Move arm with position actuators...")
 # 2) Move arm with position actuators (these are target positions, not torques)
 #    Updated joint ranges for new robot model
 q_goal = {
@@ -150,10 +152,24 @@ def gripper(opening: float):
 # Open gripper
 print("Opening gripper...")
 gripper(1.0)
-for _ in range(300):
+for t in range(300):
     mujoco.mj_step(model, data)
     if viewer is not None:
         viewer.sync()
+
+    if t % 100 == 0:
+        rgb, depth = render_rgb_depth("top_cam")
+        save_png(f"Open_gripper_frame_{t:04d}.png", rgb)
+        print(f"Saving image as Open_gripper_frame_{t:04d}.png...")
+        # if you want a depth visualization:
+        # normalize finite depths for viewing only
+        d = depth.copy()
+        m = np.isfinite(d)
+        if m.any():
+            d_vis = (255*(d[m]-d[m].min())/(d[m].ptp()+1e-8)).astype(np.uint8)
+            d_img = np.zeros_like(rgb[...,0]); d_img[m] = d_vis
+            save_png(f"Open_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
+
     time.sleep(0.01)
 
 # Close gripper
@@ -164,9 +180,10 @@ for t in range(300):
     if viewer is not None:
         viewer.sync()
 
-    if t % 10 == 0:
+    if t % 100 == 0:
         rgb, depth = render_rgb_depth("top_cam")
-        save_png(f"frame_{t:04d}.png", rgb)
+        save_png(f"Close_gripper_frame_{t:04d}.png", rgb)
+        print(f"Saving image as Close_gripper_frame_{t:04d}.png...")
         # if you want a depth visualization:
         # normalize finite depths for viewing only
         d = depth.copy()
@@ -174,7 +191,7 @@ for t in range(300):
         if m.any():
             d_vis = (255*(d[m]-d[m].min())/(d[m].ptp()+1e-8)).astype(np.uint8)
             d_img = np.zeros_like(rgb[...,0]); d_img[m] = d_vis
-            save_png(f"frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
+            save_png(f"Close_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
 
     time.sleep(0.01)
 
