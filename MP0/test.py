@@ -11,6 +11,8 @@ data  = mujoco.MjData(model)
 # (Optional) viewer - Updated for MuJoCo 3.3.5
 import mujoco.viewer
 viewer = mujoco.viewer.launch_passive(model, data)
+# ---- offscreen renderer (pick your size) ----
+renderer = mujoco.Renderer(model, height=480, width=640)
 
 # --- Helpers ---
 def actuator_id(name: str) -> int:
@@ -84,6 +86,20 @@ def set_qpos_by_joint_names(qpos_targets: dict):
         data.qpos[dof] = q
     mujoco.mj_forward(model, data)
 
+def render_rgb_depth(camera: str = "top_cam"):
+    """Return (rgb uint8 HxWx3, depth float32 HxW in meters) from a named camera."""
+    # update the scene from current data and camera
+    renderer.update_scene(data, camera=camera)
+    # RGB
+    rgb = renderer.render().copy()                    # uint8 [H,W,3]
+    # Depth (meters). May contain inf for "no hit".
+    depth = renderer.render_depth().copy()            # float32 [H,W]
+    return rgb, depth
+
+def save_png(path, img_uint8):
+    from PIL import Image
+    Image.fromarray(img_uint8).save(path)
+
 # --- Example: home, move, and operate gripper ---
 # 1) Set a comfortable start pose (radians for revolute joints)
 # Updated for new robot: 6 arm joints + gripper joints
@@ -143,10 +159,23 @@ for _ in range(300):
 # Close gripper
 print("Closing gripper...")
 gripper(0.0)
-for _ in range(300):
+for t in range(300):
     mujoco.mj_step(model, data)
     if viewer is not None:
         viewer.sync()
+
+    if t % 10 == 0:
+        rgb, depth = render_rgb_depth("top_cam")
+        save_png(f"frame_{t:04d}.png", rgb)
+        # if you want a depth visualization:
+        # normalize finite depths for viewing only
+        d = depth.copy()
+        m = np.isfinite(d)
+        if m.any():
+            d_vis = (255*(d[m]-d[m].min())/(d[m].ptp()+1e-8)).astype(np.uint8)
+            d_img = np.zeros_like(rgb[...,0]); d_img[m] = d_vis
+            save_png(f"frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
+
     time.sleep(0.01)
 
 print("Done.")
