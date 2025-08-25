@@ -1,6 +1,6 @@
 <mujoco model="piper_scene">
-  <include file="./thorlabs_breadboard/breadboard.xml"/>
-  <include file="./agilex_piper/piper.xml"/>
+  <include file="../../assets/thorlabs_breadboard/breadboard.xml"/>
+  <include file="../../assets/agilex_piper/piper.xml"/>
 
   <statistic center="0 0 0.1" extent="0.4"/>
 
@@ -19,27 +19,27 @@
     <!-- YCB object assets -->
     <!-- banana -->
     <!-- Visual -->
-    <texture name="banana_texture" type="2d" file="ycb_objects/011_banana/google_16k/texture_map.png"/>
+    <texture name="banana_texture" type="2d" file="../../assets/ycb_objects/011_banana/google_16k/texture_map.png"/>
     <material name="banana_material" texture="banana_texture"/>
-    <mesh name="banana_visual_mesh" file="ycb_objects/011_banana/google_16k/textured.obj"/>
+    <mesh name="banana_visual_mesh" file="../../assets/ycb_objects/011_banana/google_16k/textured.obj"/>
     <!-- Collision -->
-    <mesh name="banana_collision_mesh" file="ycb_objects/011_banana/google_16k/textured_vhacd.stl"/>
+    <mesh name="banana_collision_mesh" file="../../assets/ycb_objects/011_banana/google_16k/textured_vhacd.stl"/>
 
     <!-- orange -->
     <!-- Visual -->
-    <texture name="orange_texture" type="2d" file="ycb_objects/017_orange/google_16k/texture_map.png"/>
+    <texture name="orange_texture" type="2d" file="../../assets/ycb_objects/017_orange/google_16k/texture_map.png"/>
     <material name="orange_material" texture="orange_texture"/>
-    <mesh name="orange_visual_mesh" file="ycb_objects/017_orange/google_16k/textured.obj"/>
+    <mesh name="orange_visual_mesh" file="../../assets/ycb_objects/017_orange/google_16k/textured.obj"/>
     <!-- Collision -->
-    <mesh name="orange_collision_mesh" file="ycb_objects/017_orange/google_16k/textured_vhacd.stl"/>
+    <mesh name="orange_collision_mesh" file="../../assets/ycb_objects/017_orange/google_16k/textured_vhacd.stl"/>
 
     <!-- orange -->
     <!-- Visual -->
-    <texture name="strawberry_texture" type="2d" file="ycb_objects/012_strawberry/google_16k/texture_map.png"/>
+    <texture name="strawberry_texture" type="2d" file="../../assets/ycb_objects/012_strawberry/google_16k/texture_map.png"/>
     <material name="strawberry_material" texture="strawberry_texture"/>
-    <mesh name="strawberry_visual_mesh" file="ycb_objects/012_strawberry/google_16k/textured.obj"/>
+    <mesh name="strawberry_visual_mesh" file="../../assets/ycb_objects/012_strawberry/google_16k/textured.obj"/>
     <!-- Collision -->
-    <mesh name="strawberry_collision_mesh" file="ycb_objects/012_strawberry/google_16k/textured_vhacd.stl"/>
+    <mesh name="strawberry_collision_mesh" file="../../assets/ycb_objects/012_strawberry/google_16k/textured_vhacd.stl"/>
 
   </asset>
   

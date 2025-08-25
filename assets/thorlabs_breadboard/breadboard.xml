@@ -1,6 +1,6 @@
 <mujoco model="breadboard_2424">
   <asset>
-    <mesh name="breadboard_mesh" file="thorlabs_breadboard/breadboard.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="breadboard_mesh" file="../../assets/thorlabs_breadboard/breadboard.stl" scale="0.001 0.001 0.001"/>
   </asset>
 
   <worldbody>

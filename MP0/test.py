@@ -5,7 +5,7 @@ import os
 
 # --- Load model/data ---
 # Updated path to use the assets directory structure
-model = mujoco.MjModel.from_xml_path("../assets/scene.xml")  # Load the complete scene with robot and breadboard
+model = mujoco.MjModel.from_xml_path("./scene.xml")  # Load the complete scene with robot and breadboard
 data  = mujoco.MjData(model)
 
 # (Optional) viewer - Updated for MuJoCo 3.3.5
