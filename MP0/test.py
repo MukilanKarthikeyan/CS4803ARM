@@ -2,6 +2,7 @@ import time
 import numpy as np
 import mujoco
 import os
+import matplotlib.pyplot as plt
 
 # --- Load model/data ---
 # Updated path to use the assets directory structure
@@ -90,15 +91,22 @@ def render_rgb_depth(camera: str = "top_cam"):
     """Return (rgb uint8 HxWx3, depth float32 HxW in meters) from a named camera."""
     # update the scene from current data and camera
     renderer.update_scene(data, camera=camera)
-    # RGB
-    rgb = renderer.render().copy()                    # uint8 [H,W,3]
-    # Depth (meters). May contain inf for "no hit".
-    depth = renderer.render_depth().copy()            # float32 [H,W]
-    return rgb, depth
+    
+    # RGB 
+    renderer.disable_depth_rendering()
+    rgb = renderer.render().copy()          # uint8
+
+    # Depth
+    renderer.enable_depth_rendering()
+    depth = renderer.render().copy()          # uint8
+
+    return rgb.copy(), depth.copy()
 
 def save_png(path, img_uint8):
-    from PIL import Image
-    Image.fromarray(img_uint8).save(path)
+    """
+    Save an HxWx3 uint8 image to disk using matplotlib.
+    """
+    plt.imsave(path, img_uint8)
 
 # --- Example: home, move, and operate gripper ---
 # 1) Set a comfortable start pose (radians for revolute joints)
@@ -159,16 +167,20 @@ for t in range(300):
 
     if t % 100 == 0:
         rgb, depth = render_rgb_depth("top_cam")
-        save_png(f"Open_gripper_frame_{t:04d}.png", rgb)
+        save_png(f"./MP0/Open_gripper_frame_{t:04d}.png", rgb)
         print(f"Saving image as Open_gripper_frame_{t:04d}.png...")
         # if you want a depth visualization:
         # normalize finite depths for viewing only
         d = depth.copy()
         m = np.isfinite(d)
         if m.any():
-            d_vis = (255*(d[m]-d[m].min())/(d[m].ptp()+1e-8)).astype(np.uint8)
-            d_img = np.zeros_like(rgb[...,0]); d_img[m] = d_vis
-            save_png(f"Open_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
+            # normalize depth to [0, 255]
+            d_vis = (255 * (d[m] - d[m].min()) / (np.ptp(d[m]) + 1e-8)).astype(np.uint8)
+            d_img = np.zeros_like(d, dtype=np.uint8)
+            d_img[m] = d_vis
+        else:
+            d_img = np.zeros_like(d, dtype=np.uint8)
+        save_png(f"./MP0/Close_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
 
     time.sleep(0.01)
 
@@ -182,16 +194,20 @@ for t in range(300):
 
     if t % 100 == 0:
         rgb, depth = render_rgb_depth("top_cam")
-        save_png(f"Close_gripper_frame_{t:04d}.png", rgb)
+        save_png(f"./MP0/Close_gripper_frame_{t:04d}.png", rgb)
         print(f"Saving image as Close_gripper_frame_{t:04d}.png...")
         # if you want a depth visualization:
         # normalize finite depths for viewing only
         d = depth.copy()
         m = np.isfinite(d)
         if m.any():
-            d_vis = (255*(d[m]-d[m].min())/(d[m].ptp()+1e-8)).astype(np.uint8)
-            d_img = np.zeros_like(rgb[...,0]); d_img[m] = d_vis
-            save_png(f"Close_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
+            # normalize depth to [0, 255]
+            d_vis = (255 * (d[m] - d[m].min()) / (np.ptp(d[m]) + 1e-8)).astype(np.uint8)
+            d_img = np.zeros_like(d, dtype=np.uint8)
+            d_img[m] = d_vis
+        else:
+            d_img = np.zeros_like(d, dtype=np.uint8)
+        save_png(f"./MP0/Close_gripper_frame_{t:04d}_depth.png", np.stack([d_img]*3, axis=-1))
 
     time.sleep(0.01)
 
